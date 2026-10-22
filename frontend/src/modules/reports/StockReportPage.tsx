@@ -23,15 +23,15 @@ export function StockReportPage() {
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Mahsulotlar qoldig‘i"
         description="Har bir mahsulot: X so‘m / Y dona (Z blok) va qaysi ombor/kichik omborda."
       />
       {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
-      <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] text-[var(--muted)]">
+      <div className="erp-table-wrap">
+        <table className="erp-table">
+          <thead>
             <tr>
               <th className="px-4 py-3">Mahsulot</th>
               <th className="px-4 py-3">Ombor</th>

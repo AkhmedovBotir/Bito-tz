@@ -13,6 +13,7 @@ import {
 } from '@/shared/api/client'
 import { useCatalog } from '@/shared/hooks/useCatalog'
 import { holatMatni } from '@/shared/lib/labels'
+import { StatusBadge } from '@/shared/ui/StatusBadge'
 import { useDialog } from '@/shared/ui/DialogProvider'
 
 type Sale = {
@@ -178,7 +179,7 @@ export function SalesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Savdo (chiqim)"
         description="Qoralama yaratiladi. Bajarilganda ombordan chiqadi. To‘liq to‘lanmasa — mijoz qarzi."
@@ -193,9 +194,9 @@ export function SalesPage() {
         <p className="text-sm text-[var(--danger)]">{error || catalogError}</p>
       ) : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] text-[var(--muted)]">
+      <div className="erp-table-wrap">
+        <table className="erp-table">
+          <thead>
             <tr>
               <th className="px-4 py-3">Mijoz</th>
               <th className="px-4 py-3">Jami</th>
@@ -212,7 +213,7 @@ export function SalesPage() {
                 <td className="px-4 py-3">{formatMoney(s.totalAmount)}</td>
                 <td className="px-4 py-3">{formatMoney(s.paidAmount)}</td>
                 <td className="px-4 py-3">{formatMoney(s.debtAmount)}</td>
-                <td className="px-4 py-3">{holatMatni(s.status)}</td>
+                <td className="px-4 py-3"><StatusBadge status={s.status} /></td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1.5">
                     <IconButton
@@ -270,24 +271,24 @@ export function SalesPage() {
         {viewing ? (
           <div className="space-y-3 text-sm">
             <div className="grid gap-2 sm:grid-cols-2">
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Mijoz</p>
                 <p className="mt-1 font-semibold">{viewing.customerName}</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Jami</p>
                 <p className="mt-1 font-semibold">{formatMoney(viewing.totalAmount)}</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">To‘langan</p>
                 <p className="mt-1 font-semibold">{formatMoney(viewing.paidAmount)}</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Qarz</p>
                 <p className="mt-1 font-semibold">{formatMoney(viewing.debtAmount)}</p>
               </div>
             </div>
-            <ul className="space-y-1 rounded-xl border border-[var(--border)] p-3 text-[var(--muted)]">
+            <ul className="space-y-1 rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3 text-[var(--muted)]">
               {(viewing.lines || []).map((l, i) => (
                 <li key={i}>
                   {typeof l.product === 'object'

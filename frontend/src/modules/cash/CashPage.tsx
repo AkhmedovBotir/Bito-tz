@@ -113,7 +113,7 @@ export function CashPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Kassa"
         description="Kirim va chiqim. Yo‘l kira va boshqa xarajatlar to‘g‘ridan-to‘g‘ri chiqim qilinadi."
@@ -124,9 +124,11 @@ export function CashPage() {
         }
       />
 
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
-        <p className="text-sm text-[var(--muted)]">Joriy kassa qoldig‘i</p>
-        <p className="text-2xl font-semibold text-[var(--accent)]">
+      <div className="erp-kpi mb-3 max-w-sm">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--muted)]">
+          Joriy kassa qoldig‘i
+        </p>
+        <p className="mt-1 text-2xl font-semibold tabular-nums text-[var(--accent)]">
           {formatMoney(data.balance)}
         </p>
       </div>
@@ -135,9 +137,9 @@ export function CashPage() {
         <p className="text-sm text-[var(--danger)]">{error}</p>
       ) : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] text-[var(--muted)]">
+      <div className="erp-table-wrap">
+        <table className="erp-table">
+          <thead>
             <tr>
               <th className="px-4 py-3">Sana</th>
               <th className="px-4 py-3">Tur</th>
@@ -202,21 +204,21 @@ export function CashPage() {
         {viewing ? (
           <div className="space-y-3 text-sm">
             <div className="grid gap-2 sm:grid-cols-2">
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Tur</p>
                 <p className="mt-1 font-semibold">{kassaTuri(viewing.type)}</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Kategoriya</p>
                 <p className="mt-1 font-semibold">
                   {kassaKategoriya(viewing.category)}
                 </p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Summa</p>
                 <p className="mt-1 font-semibold">{formatMoney(viewing.amount)}</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Sana</p>
                 <p className="mt-1 font-semibold">
                   {new Date(viewing.date).toLocaleString('uz-UZ')}

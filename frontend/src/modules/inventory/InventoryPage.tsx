@@ -4,153 +4,147 @@ import { PageHeader } from '@/shared/ui/PageHeader'
 import { Button, Field, Input, Select } from '@/shared/ui/Field'
 import { Modal } from '@/shared/ui/Modal'
 import { IconButton } from '@/shared/ui/IconButton'
+import { StatusBadge } from '@/shared/ui/StatusBadge'
 import { apiDelete, apiGet, apiPatch, apiPost } from '@/shared/api/client'
 import { useCatalog } from '@/shared/hooks/useCatalog'
 import { holatMatni } from '@/shared/lib/labels'
 import { useDialog } from '@/shared/ui/DialogProvider'
 
-type CountDoc = {
+type InvDoc = {
   _id: string
   status: string
   lines: {
-    product: string | { _id: string; name?: string; unitsPerBlock?: number }
+    product: string | { _id: string; name?: string }
     warehouse: string
     subWarehouse: string
     systemQty: number
     countedQty: number
     difference: number
   }[]
+  note?: string
 }
 
-function getProductId(
-  product: string | { _id: string } | undefined
-): string {
-  if (!product) return ''
-  return typeof product === 'string' ? product : product._id
+type LineForm = {
+  product: string
+  warehouse: string
+  subWarehouse: string
+  countedQty: string
 }
+
+const emptyLine = (): LineForm => ({
+  product: '',
+  warehouse: '',
+  subWarehouse: '',
+  countedQty: '0',
+})
 
 export function InventoryPage() {
-  const { confirm } = useDialog()
   const { products, warehouses, error: catalogError } = useCatalog()
-  const [items, setItems] = useState<CountDoc[]>([])
+  const { confirm, alert } = useDialog()
+  const [items, setItems] = useState<InvDoc[]>([])
   const [error, setError] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [viewOpen, setViewOpen] = useState(false)
-  const [viewing, setViewing] = useState<CountDoc | null>(null)
-  const [editing, setEditing] = useState<CountDoc | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({
-    product: '',
-    warehouse: '',
-    subWarehouse: '',
-    blocks: '0',
-    pieces: '0',
-  })
+  const [viewing, setViewing] = useState<InvDoc | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [note, setNote] = useState('')
+  const [lines, setLines] = useState<LineForm[]>([emptyLine()])
 
   async function load() {
-    setItems(await apiGet<CountDoc[]>('/api/inventory'))
+    const data = await apiGet<InvDoc[]>('/api/inventory')
+    setItems(data)
   }
 
   useEffect(() => {
     load().catch((e) => setError(e.message))
   }, [])
 
-  const selectedWh = warehouses.find((w) => w._id === form.warehouse)
-
-  function resetForm() {
-    setEditing(null)
-    setForm({
-      product: '',
-      warehouse: '',
-      subWarehouse: '',
-      blocks: '0',
-      pieces: '0',
-    })
-  }
-
   function openCreate() {
-    resetForm()
+    setEditingId(null)
+    setNote('')
+    setLines([emptyLine()])
     setError('')
     setModalOpen(true)
   }
 
-  function openEdit(doc: CountDoc) {
-    const first = doc.lines?.[0]
-    const pid = getProductId(first?.product)
-    const prod = products.find((p) => p._id === pid)
-    const upb = prod?.unitsPerBlock || 1
-    const qty = first?.countedQty || 0
-    setEditing(doc)
-    setForm({
-      product: pid,
-      warehouse: first?.warehouse ? String(first.warehouse) : '',
-      subWarehouse: first?.subWarehouse ? String(first.subWarehouse) : '',
-      blocks: String(Math.floor(qty / upb)),
-      pieces: String(qty % upb),
-    })
+  function openEdit(doc: InvDoc) {
+    setEditingId(doc._id)
+    setNote(doc.note || '')
+    setLines(
+      doc.lines.map((l) => ({
+        product: typeof l.product === 'object' ? l.product._id : String(l.product),
+        warehouse: String(l.warehouse),
+        subWarehouse: String(l.subWarehouse),
+        countedQty: String(l.countedQty),
+      })),
+    )
     setError('')
     setModalOpen(true)
   }
 
-  async function onSave(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
-    setSaving(true)
     const payload = {
-      lines: [
-        {
-          product: form.product,
-          warehouse: form.warehouse,
-          subWarehouse: form.subWarehouse,
-          blocks: Number(form.blocks || 0),
-          pieces: Number(form.pieces || 0),
-        },
-      ],
+      note,
+      lines: lines.map((l) => ({
+        product: l.product,
+        warehouse: l.warehouse,
+        subWarehouse: l.subWarehouse,
+        countedQty: Number(l.countedQty),
+      })),
     }
     try {
-      if (editing) {
-        await apiPatch(`/api/inventory/${editing._id}`, payload)
-      } else {
-        await apiPost('/api/inventory', payload)
-      }
-      resetForm()
+      if (editingId) await apiPatch(`/api/inventory/${editingId}`, payload)
+      else await apiPost('/api/inventory', payload)
       setModalOpen(false)
       await load()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Xato')
-    } finally {
-      setSaving(false)
     }
   }
 
   async function postDoc(id: string) {
+    const ok = await confirm(
+      'Inventarizatsiya tasdiqlansinmi? Qoldiqlar farq bo‘yicha yangilanadi.',
+      { title: 'Tasdiqlash', danger: false },
+    )
+    if (!ok) return
     try {
-      await apiPost(`/api/inventory/${id}/post`)
+      await apiPost(`/api/inventory/${id}/post`, {})
       await load()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Xato')
+      await alert(err instanceof Error ? err.message : 'Xato', { title: 'Xato' })
     }
   }
 
   async function removeDoc(id: string) {
-    const ok = await confirm('Qoralama aktni o‘chirishni tasdiqlaysizmi?', {
-      title: 'Aktni o‘chirish',
-      confirmText: 'O‘chirish',
+    const ok = await confirm('Qoralama o‘chirilsinmi?', {
+      title: 'O‘chirish',
+      danger: true,
     })
     if (!ok) return
     try {
       await apiDelete(`/api/inventory/${id}`)
       await load()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Xato')
+      await alert(err instanceof Error ? err.message : 'Xato', { title: 'Xato' })
     }
   }
 
+  function subOptions(warehouseId: string) {
+    const wh = warehouses.find((w) => w._id === warehouseId)
+    return (wh?.subWarehouses || []).map((s) => ({
+      value: s._id,
+      label: s.name,
+    }))
+  }
+
   return (
-    <div className="space-y-6">
+    <div>
       <PageHeader
         title="Inventarizatsiya"
-        description="Haqiqiy qoldiq sanaladi, tizim bilan solishtiriladi. Bajarilganda farqlar bo‘yicha ombor to‘g‘rilanadi."
+        description="Haqiqiy qoldiq sanaladi; bajarilganda farqlar bo‘yicha ombor to‘g‘rilanadi"
         actions={
           <Button type="button" onClick={openCreate}>
             + Farqlar akti
@@ -159,67 +153,77 @@ export function InventoryPage() {
       />
 
       {(error || catalogError) && !modalOpen ? (
-        <p className="text-sm text-[var(--danger)]">{error || catalogError}</p>
+        <p className="mb-3 text-[13px] text-[var(--danger)]">
+          {error || catalogError}
+        </p>
       ) : null}
 
-      <div className="space-y-3">
-        {items.map((doc) => (
-          <article
-            key={doc._id}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="font-medium">Holat: {holatMatni(doc.status)}</p>
-              <div className="flex items-center gap-1.5">
-                <IconButton
-                  label="Ko‘rish"
-                  variant="accent"
-                  onClick={() => {
-                    setViewing(doc)
-                    setViewOpen(true)
-                  }}
-                >
-                  <Eye className="h-4 w-4" />
-                </IconButton>
-                {doc.status === 'draft' ? (
-                  <>
-                    <IconButton label="Tahrirlash" onClick={() => openEdit(doc)}>
-                      <Pencil className="h-4 w-4" />
-                    </IconButton>
+      <div className="erp-table-wrap">
+        <table className="erp-table">
+          <thead>
+            <tr>
+              <th>Holat</th>
+              <th>Qatorlar</th>
+              <th>Izoh</th>
+              <th>Amallar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((doc) => (
+              <tr key={doc._id}>
+                <td>
+                  <StatusBadge status={doc.status} />
+                </td>
+                <td className="tabular-nums">{doc.lines.length} ta</td>
+                <td className="max-w-[240px] truncate text-[var(--muted)]">
+                  {doc.note || '—'}
+                </td>
+                <td>
+                  <div className="flex items-center gap-1.5">
                     <IconButton
-                      label="Tasdiqlash"
-                      variant="success"
-                      onClick={() => postDoc(doc._id)}
+                      label="Ko‘rish"
+                      variant="accent"
+                      onClick={() => {
+                        setViewing(doc)
+                        setViewOpen(true)
+                      }}
                     >
-                      <CheckCircle2 className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                     </IconButton>
-                    <IconButton
-                      label="O‘chirish"
-                      variant="danger"
-                      onClick={() => removeDoc(doc._id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </IconButton>
-                  </>
-                ) : null}
-              </div>
-            </div>
-            <ul className="mt-2 space-y-1 text-sm text-[var(--muted)]">
-              {doc.lines.map((l, i) => (
-                <li key={i}>
-                  {typeof l.product === 'object'
-                    ? l.product?.name
-                    : 'Mahsulot'}
-                  : tizim {l.systemQty} → sanalgan {l.countedQty} (farq{' '}
-                  {l.difference})
-                </li>
-              ))}
-            </ul>
-          </article>
-        ))}
-        {!items.length ? (
-          <p className="text-sm text-[var(--muted)]">Hali inventarizatsiya yo‘q</p>
-        ) : null}
+                    {doc.status === 'draft' ? (
+                      <>
+                        <IconButton label="Tahrirlash" onClick={() => openEdit(doc)}>
+                          <Pencil className="h-4 w-4" />
+                        </IconButton>
+                        <IconButton
+                          label="Tasdiqlash"
+                          variant="success"
+                          onClick={() => postDoc(doc._id)}
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                        </IconButton>
+                        <IconButton
+                          label="O‘chirish"
+                          variant="danger"
+                          onClick={() => removeDoc(doc._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </IconButton>
+                      </>
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {!items.length ? (
+              <tr>
+                <td colSpan={4} className="erp-empty">
+                  Hali inventarizatsiya yo‘q
+                </td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
       </div>
 
       <Modal
@@ -227,40 +231,34 @@ export function InventoryPage() {
         onClose={() => setViewOpen(false)}
         title="Inventarizatsiya ma’lumoti"
         description={viewing ? holatMatni(viewing.status) : undefined}
+        wide
       >
         {viewing ? (
-          <div className="space-y-3 text-sm">
-            <ul className="space-y-2">
-              {viewing.lines.map((l, i) => (
-                <li key={i} className="rounded-xl border border-[var(--border)] p-3">
-                  <p className="font-medium text-[var(--ink)]">
-                    {typeof l.product === 'object'
-                      ? l.product?.name
-                      : 'Mahsulot'}
-                  </p>
-                  <p className="mt-1 text-[var(--muted)]">
-                    Tizim: {l.systemQty} · Sanalgan: {l.countedQty} · Farq:{' '}
-                    {l.difference}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="ghost" onClick={() => setViewOpen(false)}>
-                Yopish
-              </Button>
-              {viewing.status === 'draft' ? (
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setViewOpen(false)
-                    openEdit(viewing)
-                  }}
-                >
-                  Tahrirlash
-                </Button>
-              ) : null}
-            </div>
+          <div className="erp-table-wrap">
+            <table className="erp-table">
+              <thead>
+                <tr>
+                  <th>Mahsulot</th>
+                  <th>Tizim</th>
+                  <th>Sanalgan</th>
+                  <th>Farq</th>
+                </tr>
+              </thead>
+              <tbody>
+                {viewing.lines.map((l, i) => (
+                  <tr key={i}>
+                    <td>
+                      {typeof l.product === 'object'
+                        ? l.product?.name
+                        : 'Mahsulot'}
+                    </td>
+                    <td className="tabular-nums">{l.systemQty}</td>
+                    <td className="tabular-nums">{l.countedQty}</td>
+                    <td className="tabular-nums font-medium">{l.difference}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : null}
       </Modal>
@@ -268,82 +266,93 @@ export function InventoryPage() {
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editing ? 'Farqlar aktini tahrirlash' : 'Yangi farqlar akti'}
-        description="Sanalgan miqdorni kiriting — tizim farqni hisoblaydi"
+        title={editingId ? 'Inventarni tahrirlash' : 'Yangi inventarizatsiya'}
         wide
       >
-        <form onSubmit={onSave} className="grid gap-3 md:grid-cols-2">
-          <Field label="Mahsulot">
-            <Select
-              value={form.product}
-              onChange={(product) => setForm((f) => ({ ...f, product }))}
-              required
-              options={[
-                { value: '', label: 'Tanlang' },
-                ...products.map((p) => ({ value: p._id, label: p.name })),
-              ]}
-            />
+        <form onSubmit={onSubmit} className="space-y-3">
+          <Field label="Izoh">
+            <Input value={note} onChange={(e) => setNote(e.target.value)} />
           </Field>
-          <Field label="Ombor">
-            <Select
-              value={form.warehouse}
-              onChange={(warehouse) =>
-                setForm((f) => ({
-                  ...f,
-                  warehouse,
-                  subWarehouse: '',
-                }))
-              }
-              required
-              options={[
-                { value: '', label: 'Tanlang' },
-                ...warehouses.map((w) => ({ value: w._id, label: w.name })),
-              ]}
-            />
-          </Field>
-          <Field label="Kichik ombor">
-            <Select
-              value={form.subWarehouse}
-              onChange={(subWarehouse) =>
-                setForm((f) => ({ ...f, subWarehouse }))
-              }
-              required
-              options={[
-                { value: '', label: 'Tanlang' },
-                ...(selectedWh?.subWarehouses.map((s) => ({
-                  value: s._id,
-                  label: s.name,
-                })) || []),
-              ]}
-            />
-          </Field>
-          <Field label="Sanalgan blok">
-            <Input
-              type="number"
-              min={0}
-              value={form.blocks}
-              onChange={(e) => setForm((f) => ({ ...f, blocks: e.target.value }))}
-            />
-          </Field>
-          <Field label="Sanalgan dona">
-            <Input
-              type="number"
-              min={0}
-              value={form.pieces}
-              onChange={(e) => setForm((f) => ({ ...f, pieces: e.target.value }))}
-            />
-          </Field>
-          {error ? (
-            <p className="text-sm text-[var(--danger)] md:col-span-2">{error}</p>
-          ) : null}
-          <div className="flex justify-end gap-2 md:col-span-2">
-            <Button type="button" variant="ghost" onClick={() => setModalOpen(false)}>
-              Bekor qilish
+
+          {lines.map((line, idx) => (
+            <div
+              key={idx}
+              className="grid gap-2 rounded-[var(--radius)] border border-[var(--border)] p-3 sm:grid-cols-2"
+            >
+              <Field label="Mahsulot">
+                <Select
+                  value={line.product}
+                  onChange={(v) =>
+                    setLines((prev) =>
+                      prev.map((x, i) => (i === idx ? { ...x, product: v } : x)),
+                    )
+                  }
+                  options={products.map((p) => ({ value: p._id, label: p.name }))}
+                  required
+                />
+              </Field>
+              <Field label="Ombor">
+                <Select
+                  value={line.warehouse}
+                  onChange={(v) =>
+                    setLines((prev) =>
+                      prev.map((x, i) =>
+                        i === idx
+                          ? { ...x, warehouse: v, subWarehouse: '' }
+                          : x,
+                      ),
+                    )
+                  }
+                  options={warehouses.map((w) => ({
+                    value: w._id,
+                    label: w.name,
+                  }))}
+                  required
+                />
+              </Field>
+              <Field label="Kichik ombor">
+                <Select
+                  value={line.subWarehouse}
+                  onChange={(v) =>
+                    setLines((prev) =>
+                      prev.map((x, i) =>
+                        i === idx ? { ...x, subWarehouse: v } : x,
+                      ),
+                    )
+                  }
+                  options={subOptions(line.warehouse)}
+                  required
+                />
+              </Field>
+              <Field label="Sanalgan miqdor (dona)">
+                <Input
+                  type="number"
+                  min={0}
+                  value={line.countedQty}
+                  onChange={(e) =>
+                    setLines((prev) =>
+                      prev.map((x, i) =>
+                        i === idx ? { ...x, countedQty: e.target.value } : x,
+                      ),
+                    )
+                  }
+                  required
+                />
+              </Field>
+            </div>
+          ))}
+
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setLines((prev) => [...prev, emptyLine()])}
+            >
+              + Qator
             </Button>
-            <Button type="submit" disabled={saving}>
-              {saving ? 'Saqlanmoqda…' : editing ? 'Saqlash' : 'Aktni yaratish'}
-            </Button>
+            <Button type="submit">{editingId ? 'Saqlash' : 'Yaratish'}</Button>
           </div>
+          {error ? <p className="text-[13px] text-[var(--danger)]">{error}</p> : null}
         </form>
       </Modal>
     </div>

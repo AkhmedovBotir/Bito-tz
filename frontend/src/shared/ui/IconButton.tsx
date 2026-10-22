@@ -4,13 +4,13 @@ type Variant = 'default' | 'accent' | 'danger' | 'success'
 
 const styles: Record<Variant, string> = {
   default:
-    'border-[var(--border)] text-[var(--muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]',
+    'border-[var(--border)] text-[var(--muted)] hover:border-[var(--border-strong)] hover:bg-slate-50 hover:text-[var(--ink)]',
   accent:
-    'border-[var(--accent)]/30 bg-[var(--accent-soft)] text-[var(--accent)] hover:border-[var(--accent)]',
+    'border-blue-200 bg-[var(--accent-soft)] text-[var(--accent)] hover:border-[var(--accent)]',
   danger:
-    'border-red-200 bg-red-50 text-[var(--danger)] hover:border-[var(--danger)]',
+    'border-red-200 bg-[var(--danger-soft)] text-[var(--danger)] hover:border-[var(--danger)]',
   success:
-    'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-500',
+    'border-emerald-200 bg-[var(--success-soft)] text-[var(--success)] hover:border-[var(--success)]',
 }
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -32,7 +32,7 @@ export function IconButton({
       title={label}
       aria-label={label}
       className={[
-        'inline-flex h-9 w-9 items-center justify-center rounded-lg border transition disabled:opacity-50',
+        'inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius)] border transition disabled:opacity-50',
         styles[variant],
         className,
       ].join(' ')}

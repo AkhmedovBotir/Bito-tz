@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { X } from 'lucide-react'
 
 type Props = {
   open: boolean
@@ -39,7 +40,7 @@ export function Modal({
           <motion.button
             type="button"
             aria-label="Yopish"
-            className="absolute inset-0 bg-[#0f1a14]/45 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-slate-900/45"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -48,31 +49,32 @@ export function Modal({
           <motion.div
             role="dialog"
             aria-modal="true"
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            initial={{ opacity: 0, y: 16, scale: 0.99 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, y: 10, scale: 0.99 }}
+            transition={{ duration: 0.16 }}
             className={[
-              'relative z-10 max-h-[90svh] w-full overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-xl',
+              'relative z-10 max-h-[90svh] w-full overflow-y-auto border border-[var(--border)] bg-[var(--surface)] shadow-xl',
+              'rounded-[var(--radius)]',
               wide ? 'max-w-3xl' : 'max-w-lg',
             ].join(' ')}
           >
-            <div className="sticky top-0 flex items-start justify-between gap-3 border-b border-[var(--border)] bg-[var(--surface)] px-5 py-4">
+            <div className="sticky top-0 flex items-start justify-between gap-3 border-b border-[var(--border)] bg-[#f8fafc] px-4 py-3">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--ink)]">{title}</h3>
+                <h3 className="text-[15px] font-semibold text-[var(--ink)]">{title}</h3>
                 {description ? (
-                  <p className="mt-0.5 text-sm text-[var(--muted)]">{description}</p>
+                  <p className="mt-0.5 text-[12px] text-[var(--muted)]">{description}</p>
                 ) : null}
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-lg border border-[var(--border)] px-2.5 py-1 text-sm text-[var(--muted)] hover:text-[var(--ink)]"
+                className="rounded-[var(--radius)] border border-[var(--border)] p-1.5 text-[var(--muted)] hover:bg-white hover:text-[var(--ink)]"
               >
-                ✕
+                <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="px-5 py-4">{children}</div>
+            <div className="px-4 py-4">{children}</div>
           </motion.div>
         </div>
       ) : null}

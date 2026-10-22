@@ -124,7 +124,7 @@ export function ProductsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Mahsulotlar"
         description="Har bir mahsulot: nom, narx, 1 blok = N dona. Konvertatsiya avtomatik."
@@ -139,9 +139,9 @@ export function ProductsPage() {
         <p className="text-sm text-[var(--danger)]">{error}</p>
       ) : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] text-[var(--muted)]">
+      <div className="erp-table-wrap">
+        <table className="erp-table">
+          <thead>
             <tr>
               <th className="px-4 py-3">Nomi</th>
               <th className="px-4 py-3">1 blok</th>
@@ -196,19 +196,19 @@ export function ProductsPage() {
         {viewing ? (
           <div className="space-y-3 text-sm">
             <div className="grid gap-2 sm:grid-cols-2">
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">1 blokda</p>
                 <p className="mt-1 font-semibold">{viewing.unitsPerBlock} dona</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Sotuv narxi</p>
                 <p className="mt-1 font-semibold">{formatMoney(viewing.salePrice)}</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">Tannarx</p>
                 <p className="mt-1 font-semibold">{formatMoney(viewing.costPrice)}</p>
               </div>
-              <div className="rounded-xl border border-[var(--border)] p-3">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-slate-50 p-3">
                 <p className="text-[var(--muted)]">1 blok sotuv summasi</p>
                 <p className="mt-1 font-semibold">
                   {formatMoney(viewing.salePrice * viewing.unitsPerBlock)}

@@ -151,7 +151,7 @@ export function WarehousesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Omborlar"
         description="Asosiy ombor va ichidagi kichik omborlar. Mahsulot joylashuvi shu orqali belgilanadi."
@@ -175,7 +175,7 @@ export function WarehousesPage() {
         {items.map((w) => (
           <article
             key={w._id}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="erp-panel p-4"
           >
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-semibold">{w.name}</h3>

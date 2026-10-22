@@ -124,10 +124,10 @@ export function Select({
         aria-controls={listId}
         onClick={() => setOpen((v) => !v)}
         className={[
-          'flex w-full items-center justify-between gap-2 rounded-lg border bg-white px-3 py-2 text-left text-sm outline-none transition',
+          'flex w-full items-center justify-between gap-2 rounded-[var(--radius)] border bg-white px-3 py-2 text-left text-[13px] outline-none transition',
           open
             ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/15'
-            : 'border-[var(--border)] hover:border-[var(--accent)]/50',
+            : 'border-[var(--border)] hover:border-[var(--border-strong)]',
           disabled ? 'cursor-not-allowed opacity-60' : '',
         ].join(' ')}
       >
@@ -149,9 +149,9 @@ export function Select({
       </button>
 
       {open ? (
-        <div className="absolute z-[70] mt-1 w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-xl">
-          <div className="flex items-center gap-2 border-b border-[var(--border)] px-3 py-2">
-            <Search className="h-4 w-4 shrink-0 text-[var(--muted)]" />
+        <div className="absolute z-[70] mt-1 w-full overflow-hidden rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] shadow-lg">
+          <div className="flex items-center gap-2 border-b border-[var(--border)] bg-slate-50 px-3 py-2">
+            <Search className="h-3.5 w-3.5 shrink-0 text-[var(--muted)]" />
             <input
               ref={searchRef}
               value={query}
@@ -160,14 +160,14 @@ export function Select({
                 setHighlight(0)
               }}
               placeholder={searchPlaceholder}
-              className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--muted)]"
+              className="w-full bg-transparent text-[13px] outline-none placeholder:text-[var(--muted)]"
             />
           </div>
 
           <ul
             id={listId}
             role="listbox"
-            className="max-h-56 overflow-y-auto py-1"
+            className="max-h-56 overflow-y-auto py-0.5"
           >
             {filtered.length ? (
               filtered.map((opt, index) => {
@@ -185,7 +185,7 @@ export function Select({
                         if (!opt.disabled) pick(opt.value)
                       }}
                       className={[
-                        'flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm transition',
+                        'flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-[13px] transition',
                         focused ? 'bg-[var(--accent-soft)]' : '',
                         active ? 'font-medium text-[var(--accent)]' : 'text-[var(--ink)]',
                         opt.disabled ? 'cursor-not-allowed opacity-50' : '',

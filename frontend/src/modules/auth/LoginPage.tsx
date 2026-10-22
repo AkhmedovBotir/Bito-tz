@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { useAuth } from './AuthContext'
+import { Button, Field, Input } from '@/shared/ui/Field'
 
 export function LoginPage() {
   const { login, store, loading } = useAuth()
@@ -28,62 +28,78 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center p-4">
-      <motion.form
-        onSubmit={onSubmit}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm"
-      >
-        <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
-          Do‘kon tizimi
-        </p>
-        <h1 className="mt-1 text-2xl font-semibold text-[var(--accent)]">
-          Do‘konga kirish
-        </h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">
-          Login va parol bilan tizimga kiring
-        </p>
+    <div className="grid min-h-svh lg:grid-cols-[1.05fr_1fr]">
+      <aside className="hidden flex-col justify-between bg-[var(--sidebar)] p-10 text-white lg:flex">
+        <div>
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius)] bg-[var(--sidebar-active)] text-sm font-bold">
+            ERP
+          </div>
+          <h1 className="mt-8 text-3xl font-semibold tracking-tight">
+            Do‘kon ERP tizimi
+          </h1>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-300">
+            Ombor qoldig‘i, savdo-xarid hujjatlari, kassa va sof foydani bitta
+            professional ish muhitida boshqaring.
+          </p>
+        </div>
+        <ul className="space-y-2 text-sm text-slate-400">
+          <li>• Dona / blok hisobi</li>
+          <li>• Draft → bajarish oqimi</li>
+          <li>• Qarzlar va P&L hisobotlari</li>
+        </ul>
+      </aside>
 
-        <label className="mt-5 block text-sm">
-          <span className="text-[var(--muted)]">Login</span>
-          <input
-            className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 outline-none focus:border-[var(--accent)]"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </label>
-        <label className="mt-3 block text-sm">
-          <span className="text-[var(--muted)]">Parol</span>
-          <input
-            type="password"
-            className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 outline-none focus:border-[var(--accent)]"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-
-        {error ? (
-          <p className="mt-3 text-sm text-[var(--danger)]">{error}</p>
-        ) : null}
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="mt-5 w-full rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white disabled:opacity-60"
+      <div className="flex items-center justify-center bg-[var(--bg)] p-4">
+        <form
+          onSubmit={onSubmit}
+          className="erp-panel w-full max-w-md p-6"
         >
-          {submitting ? 'Kutilmoqda…' : 'Kirish'}
-        </button>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+            Tizimga kirish
+          </p>
+          <h2 className="mt-1 text-xl font-semibold text-[var(--ink)]">
+            Do‘kon hisobi
+          </h2>
+          <p className="mt-1 text-[13px] text-[var(--muted)]">
+            Login va parol bilan davom eting
+          </p>
 
-        <p className="mt-4 text-center text-sm text-[var(--muted)]">
-          Hisob yo‘qmi?{' '}
-          <Link className="text-[var(--accent)] underline" to="/register">
-            Ro‘yxatdan o‘tish
-          </Link>
-        </p>
-      </motion.form>
+          <div className="mt-5 space-y-3">
+            <Field label="Login">
+              <Input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                required
+              />
+            </Field>
+            <Field label="Parol">
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </Field>
+          </div>
+
+          {error ? (
+            <p className="mt-3 text-[13px] text-[var(--danger)]">{error}</p>
+          ) : null}
+
+          <Button type="submit" disabled={submitting} className="mt-5 w-full">
+            {submitting ? 'Kutilmoqda…' : 'Kirish'}
+          </Button>
+
+          <p className="mt-4 text-center text-[13px] text-[var(--muted)]">
+            Hisob yo‘qmi?{' '}
+            <Link className="font-medium text-[var(--accent)] hover:underline" to="/register">
+              Ro‘yxatdan o‘tish
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   )
 }

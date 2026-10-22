@@ -147,7 +147,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
               <motion.button
                 type="button"
                 aria-label="Yopish"
-                className="absolute inset-0 bg-[#0f1a14]/50 backdrop-blur-[2px]"
+                className="absolute inset-0 bg-slate-900/45"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -164,12 +164,12 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.98 }}
                 transition={{ duration: 0.18 }}
-                className="relative z-10 w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-xl"
+                className="relative z-10 w-full max-w-md rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-xl"
               >
-                <h3 className="text-lg font-semibold text-[var(--ink)]">
+                <h3 className="text-[15px] font-semibold text-[var(--ink)]">
                   {dialog.title}
                 </h3>
-                <p className="mt-2 text-sm text-[var(--muted)]">{dialog.message}</p>
+                <p className="mt-2 text-[13px] text-[var(--muted)]">{dialog.message}</p>
 
                 {dialog.kind === 'prompt' ? (
                   <div className="mt-4">

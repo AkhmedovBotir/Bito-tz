@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { apiGet, formatMoney } from '@/shared/api/client'
-import { holatMatni, qarzTuri } from '@/shared/lib/labels'
+import { qarzTuri } from '@/shared/lib/labels'
+import { StatusBadge } from '@/shared/ui/StatusBadge'
 
 type Debt = {
   _id: string
@@ -24,15 +25,15 @@ export function DebtsPage() {
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Qarzlar"
         description="Mijoz qarzi va ta’minotchiga bo‘lgan qarzlar ro‘yxati."
       />
       {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
-      <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--border)] text-[var(--muted)]">
+      <div className="erp-table-wrap">
+        <table className="erp-table">
+          <thead>
             <tr>
               <th className="px-4 py-3">Tur</th>
               <th className="px-4 py-3">Tomoni</th>
@@ -49,7 +50,7 @@ export function DebtsPage() {
                 <td className="px-4 py-3">{d.partyName}</td>
                 <td className="px-4 py-3">{formatMoney(d.amount)}</td>
                 <td className="px-4 py-3">{formatMoney(d.remaining)}</td>
-                <td className="px-4 py-3">{holatMatni(d.status)}</td>
+                <td className="px-4 py-3"><StatusBadge status={d.status} /></td>
                 <td className="px-4 py-3">{d.note || '—'}</td>
               </tr>
             ))}
