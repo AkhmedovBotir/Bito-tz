@@ -1,0 +1,69 @@
+================================================================================
+AI PROMPTLAR JURNALI — Mini-ERP (Ichimliklar do'koni)
+Loyiha: TZ ERP
+Qoida: Har bir foydalanuvchi prompti shu faylga yozib boriladi.
+================================================================================
+
+---
+[2026-10-22] Prompt #1
+---
+Ushbu loyihani shu yerini ko'r. Undan tashqari @texnik_topshiriq.md ni ham to'liq ko'rib chiq va men nima qilay ayt.
+
+---
+[2026-10-22] Prompt #2
+---
+1. Backend nodejs + mongodb + express boladi.
+2. Biz yozyotgan yoki biz berayotgan har bir prompt ni shu joyga bir txt fayl qib yozib bor doim.
+3. Frontend esa Reactjs, framer motion, tailwind css da qil.
+4. Backend ham frontend ham modular monolit da bo'ladi
+
+---
+[2026-10-22] Prompt #3
+---
+1. Do'kon kirishi uchun auth jarayonlarini frontend va backendda qil. Dokon malumotlari: name, phone, username, password. Birinchi dokonni yaratib olish uchun ham backendda npm run create-store, undan tashqari do'konda auth qismda: login, registr. (qo'shimcha: sidebar, navbar, outlet kabi komponentlarlar bolsin).
+2. Maxsulotlar qismini qilishda har bir maxsulot nomi, narxi, ikki xil o'lchov birligiga (dona va blok ga ega bolishi kerak. Masalan 1 blok = 24 dona. Tizim avtomatik ravishda dona va blok o'rtasidagi konvertatsiyani hisoblab turishi kerak.
+3. Omborlar (Warehouses & Subwarehouses) asosiy ombor va uning ichidagi kichik subombor. har bir maxsulot qaysi omborda turgani orqali belgilanadi.
+4. Asosiy biznes jarayonlarini yo'lga qo'yish. Workflow qismi:
+4.1. Kirim (Xarid yaratish va bajarish): Ta'minotchidan mol kelganda "Xarid" hujjati ochiladi. Hujjat tasdiqlangandagina (bajarilganda) ombordagi mahsulotlar soni avtomatik ravishda qo'shiladi.
+4.2. Chiqim (Savdo yaratish va bajarish): Mijozga mol sotilganda "Savdo" hujjati ochiladi. Hujjat bajarilishi bilan ombordan tegishli miqdordagi mahsulot kamayadi.
+4.3. Pul harakati va qarzlar: Savdo vaqtida pul to'liq berilmasa, qolgan qism avtomatik ravishda mijoz qarzi sifatida yoziladi. Xaridlarda esa bizning ta'minotchiga bo'lgan qarzimiz shakllanadi. Yo'l kira kabi xarajatlar to'g'ridan-to'g'ri kassadan chiqim qilinadi.
+4.4. Inventarizatsiya: Vaqti-vaqti bilan ombordagi haqiqiy qoldiq sanalib, tizimdagi raqamlar bilan solishtiriladi va farq bo'lsa to'g'rilanadi (farqlar akti tuziladi).
+5. Do'kon egasini biznes holatini ko'rib turuvchi 3ta oyna:
+5.1. Mahsulotlar qoldig'i hisoboti: Har bir mahsulot bo'yicha "X so'm / Y dona (Z blok)" va u qaysi omborda turgani aniq ko'rinib turadi.
+5.2. Savdo hisoboti: Qaysi sanada, qancha savdo bo'lgani, eng ko'p sotilgan mahsulotlar tahlili.
+5.3. P&L (Foyda va zarar) hisoboti: Tushumlar minus tannarx minus xarajatlar (yo'l kira va hokazo) = Sof foyda formulasi asosida do'kon egasiga real foydani ko'rsatadi.
+
+---
+[2026-10-22] Prompt #4
+---
+Sidebar da hamburger menu qib ber. Undan tashqari CRUD amallarni modal systemga olib o'tib ber. Barcha ingliz so'zlar o'rniga o'zbekchasini qilib ber. Navbar dizaynini ham o'zgartirsang
+
+---
+[2026-10-22] Prompt #5
+---
+Endi frontend qismlar bo'yicha biroz yangilanish olib boramiz:
+1. sidebar planshet dan katta bolsa sidebar doim ochiq tursin. planshetdan boshlab kichrayganda yopilib hamburger menu formatiga o'tishni boshlasin.
+2. navbar dagi chiqish tugmani ham iconli buttonga o'zgartir.
+3. Sidebarda ham menyularda o'ziga mos iconlar qo'yib ber.
+
+---
+[2026-10-22] Prompt #6
+---
+Omborlarni o'zgartirish, kirim chiqimlarni o'zgartirish, savdo va qayerda o'zgartirish, o'chirish yo'q bo'lsa o'sha joylarga qo'yib qilib ber
+
+---
+[2026-10-22] Prompt #7
+---
+prompt, alert, confirm ni o'rniga modallardan qil
+
+---
+[2026-10-22] Prompt #8
+---
+Barcha joydagi select optionlarni custom qilib ber. Unda birinchi option searcha bo'ladi
+
+---
+[2026-10-22] Prompt #9
+---
+Endi qoidalar 2-qismini ishlab chiq.
+
+================================================================================

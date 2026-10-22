@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+:root {
+  --bg: #f3f6f4;
+  --surface: #ffffff;
+  --ink: #14201a;
+  --muted: #5c6b63;
+  --accent: #1f6b4a;
+  --accent-soft: #d8efe4;
+  --border: #d5e0d9;
+  --danger: #b42318;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, #e7f4ec 0%, transparent 40%),
+    linear-gradient(180deg, #f7faf8 0%, var(--bg) 100%);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
